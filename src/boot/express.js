@@ -21,9 +21,8 @@ app.enable('trust proxy');
 
 if (process.env.NODE_ENV === 'development') {
     app.use(logger('dev'));
+    app.use('/swagger', swagger.serve, swagger.setup(swaggerDocument));
 }
-
-app.use('/swagger', swagger.serve, swagger.setup(swaggerDocument));
 
 app.use(bodyParser.json());
 

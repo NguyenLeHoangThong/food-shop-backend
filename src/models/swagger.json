@@ -18,13 +18,39 @@
         {
             "name": "Categories",
             "description": "Api categories"
-        }
+        },
+        {
+          "name": "Products",
+          "description": "Api products"
+      }
     ],
     "paths": {
         "/categories/preview-products": {
           "get": {
             "tags": [
               "Categories"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              }
+            }
+          }
+        },
+        "/product/": {
+          "get": {
+            "tags": [
+              "Products"
+            ],
+            "parameters": [
+              {
+                "in": "path",
+                "name": "categoryId",
+                "schema": {
+                  "type": "integer"
+                },
+                "required": true 
+              }
             ],
             "responses": {
               "200": {
