@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { testRouter } from "./test/test.route.js";
+import { categoriesRouter } from "./categories/categories.route.js";
 
 export const mainRouter = Router();
 
-mainRouter.use('/test', testRouter);
+mainRouter.use('/categories', categoriesRouter);

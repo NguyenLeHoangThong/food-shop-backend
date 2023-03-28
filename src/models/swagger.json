@@ -1,0 +1,37 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "BHX API Documentation",
+        "description": "SaaS API Documentation",
+        "contact": {
+            "email": "20127078@student.hcmus.edu.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Version 1.0"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Categories",
+            "description": "Api categories"
+        }
+    ],
+    "paths": {
+        "/categories/preview-products": {
+          "get": {
+            "tags": [
+              "Categories"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              }
+            }
+          }
+        }
+    }    
+}
