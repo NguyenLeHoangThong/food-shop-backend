@@ -27,7 +27,7 @@ export default class ProductsServices {
                 .from('products')
                 .where('products.id', '=', data.id);
 
-            return results && results.length ? results : [];
+            return results && results.length ? results[0] : {};
         } catch (error) {
             return res.status(500).send(({
                 error: error?.message || error
