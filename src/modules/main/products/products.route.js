@@ -6,4 +6,7 @@ export const productsRouter = Router();
 productsRouter.route('/')
     .get(productsController.findAll);
 
+productsRouter.route('/:id')
+    .get(productsController.findById);
+
 
