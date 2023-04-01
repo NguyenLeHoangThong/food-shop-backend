@@ -7,8 +7,7 @@ export default class ProductsValidation {
         })
 
         try {
-            const data = schema.validateSync(req.query);
-            return data;
+            return schema.validateSync(req.query);
         } catch (error) {
             throw new Error(error);
         }
@@ -20,8 +19,7 @@ export default class ProductsValidation {
         });
 
         try {
-            const data = schema.validateSync(req.params);
-            return data;
+            return schema.validateSync(req.params);
         } catch (error) {
             throw new Error(error);
         }
