@@ -20,7 +20,7 @@ export default class ProductsServices {
             }
             else if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword}%'`)
+                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
                     return res.status(500).send(({
