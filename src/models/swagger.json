@@ -48,8 +48,14 @@
             "name": "categoryId",
             "schema": {
               "type": "integer"
-            },
-            "required": true
+            }
+          },
+          {
+            "in": "path",
+            "name": "keyword",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

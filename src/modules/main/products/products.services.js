@@ -5,12 +5,45 @@ export default class ProductsServices {
         try {
             const client = await getConnection();
 
-            const results = await client
-                .select()
-                .from('products')
-                .where(`products.category_id`, '=', data.categoryId)
+            if (data.categoryId) {
+                try {
+                    const results = await client
+                        .select()
+                        .from('products')
+                        .where(`products.category_id`, '=', data.categoryId)
+                    return results && results.length ? results : []
+                } catch (error) {
+                    return res.status(500).send(({
+                        error: error?.message || error
+                    }));
+                }
+            }
+            else if (data.keyword) {
+                try {
+                    const results = await client.select()
+                        .from('products')
+                        .where('name', 'like', `%${data.keyword}%`)
 
-            return results && results.length ? results : []
+                    return results && results.length ? results : [];
+                } catch (error) {
+                    return res.status(500).send(({
+                        error: error?.message || error
+                    }));
+                }
+            }
+            else {
+                try {
+                    const results = await client.select()
+                        .from('products')
+
+                    return results && results.length ? results : [];
+                } catch (error) {
+                    return res.status(500).send(({
+                        error: error?.message || error
+                    }));
+                }
+            }
+
         }
         catch (error) {
             return res.status(500).send(({
@@ -39,10 +72,25 @@ export default class ProductsServices {
         try {
             const client = await getConnection();
             const results = await client.select()
-            .from('products')
-            .where('products.category_id', '=', data.category_id)
-            .andWhere('products.id', '<>', data.id)
-            .limit(limit);
+                .from('products')
+                .where('products.category_id', '=', data.category_id)
+                .andWhere('products.id', '<>', data.id)
+                .limit(limit);
+
+            return results && results.length ? results : [];
+        } catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }));
+        }
+    }
+
+    static async searchByText(data, req, res) {
+        try {
+            const client = await getConnection();
+            const results = await client.select()
+                .from('products')
+                .where('name', 'like', `%${data?.keyword}%`)
 
             return results && results.length ? results : [];
         } catch (error) {
