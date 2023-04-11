@@ -21,6 +21,9 @@ export default class InfoServices {
         try {
             const client = await getConnection();
 
+            const user_check = await client.select('users.id').from('users').where('users.firebase_uid', '=', data.firebase_uid);
+            if (user_check && user_check.length) throw Error("account existed")
+
             return await client
                 .transaction(async (trx) => {
                     try {
