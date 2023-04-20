@@ -1,4 +1,4 @@
-import { getConnection } from '../../../utils/connectDatabase.js';
+import { getConnection } from '../../../../utils/connectDatabase.js';
 
 export default class InfoServices {
     static async findByUid(req, res) {

@@ -169,7 +169,7 @@
         }
       }
     },
-    "/users":{
+    "/":{
       "post":{
         "tags": [
           "User information and order list"
@@ -228,7 +228,7 @@
         }
       }
     },
-    "/users/{firebase_uid}":{
+    "/{firebase_uid}":{
       "put":{
         "tags": [
           "User information and order list"
@@ -290,7 +290,7 @@
         }
       }
     },
-    "users/{firebase_uid}/orders": {
+    "{firebase_uid}/orders": {
       "get": {
         "tags":[
           "User information and order list"

@@ -1,4 +1,4 @@
-import { getConnection } from "../../../utils/connectDatabase.js";
+import { getConnection } from "../../../../utils/connectDatabase.js";
 import InfoServices from "../info/info.services.js";
 
 
