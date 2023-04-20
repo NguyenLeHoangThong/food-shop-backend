@@ -3,7 +3,7 @@ import categoriesController from "./categories.controller.js";
 
 export const categoriesRouter = Router();
 
-categoriesRouter.route('/')
+categoriesRouter.route('/') 
     .get(categoriesController.findAll)
     .post(categoriesController.create)
 
