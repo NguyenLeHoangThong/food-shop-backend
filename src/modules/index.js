@@ -6,4 +6,3 @@ export const router = Router();
 
 router.use('/', mainRouter);
 router.use('/admin', adminRouter);
-

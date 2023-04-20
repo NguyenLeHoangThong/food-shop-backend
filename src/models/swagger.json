@@ -26,6 +26,10 @@
     {
       "name": "Admin Categories",
       "description": "Api admin categories"
+    },
+    {
+      "name": "User information and order list",
+      "description": "Api user information and orders"
     }
   ],
   "paths": {
@@ -160,6 +164,261 @@
         },
         "responses": {
           "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/":{
+      "post":{
+        "tags": [
+          "User information and order list"
+        ],
+        "requestBody":{
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "firebase_uid"
+                ],
+                "properties": {
+                  "firebase_uid": {
+                    "type": "number"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "fullname": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["MALE", "FEMALE"]
+                  },
+                  "province_id": {
+                    "type": "number"
+                  },
+                  "district_id": {
+                    "type": "number"
+                  },
+                  "ward_id": {
+                    "type": "number"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "authority": {
+                    "type": "string",
+                    "enum": ["ADMIN", "CUSTOMER"]
+                  }
+
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/{firebase_uid}":{
+      "put":{
+        "tags": [
+          "User information and order list"
+        ],
+        "requestBody":{
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "fullname": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["MALE", "FEMALE"]
+                  },
+                  "province_id": {
+                    "type": "number"
+                  },
+                  "district_id": {
+                    "type": "number"
+                  },
+                  "ward_id": {
+                    "type": "number"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "authority": {
+                    "type": "string",
+                    "enum": ["ADMIN", "CUSTOMER"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get":{
+        "tags":[
+          "User information and order list"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users{firebase_uid}/orders": {
+      "get": {
+        "tags":[
+          "User information and order list"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags":[
+          "User information and order list"
+        ],
+        "requestBody":{
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required":[
+                  "items",
+                  "fullname",
+                  "phone",
+                  "email",
+                  "gender",
+                  "province_id",
+                  "district_id",
+                  "ward_id",
+                  "address",
+                  "delivery_date",
+                  "delivery_timerange_id",
+                  "payment_method_id"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "item": {
+                      "type" :"object",
+                      "required": [
+                        "id", 
+                        "name",
+                        "unit_price",
+                        "stock"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "unit_price": {
+                          "type": "number"
+                        },
+                        "stock": {
+                          "type": "number"
+                        },
+                        "category_id": {
+                          "type": "number"
+                        },
+                        "general_description": {
+                          "type": "string"
+                        },
+                        "attribute_label": {
+                          "type": ["string", "null"]
+                        },
+                        "attribute_value": {
+                          "type": ["string", "null"]
+                        },
+                        "promotion_id": {
+                          "type": ["number", "null"]
+                        },
+                        "note": {
+                          "type": ["string", "null"]
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "modified": {
+                          "type": "string"
+                        },
+                        "banner": {
+                          "type": "string"
+                        }
+                      } 
+                    }
+                  },
+                  "fullname": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["MALE", "FEMALE"]
+                  },
+                  "province_id": {
+                    "type": "number"
+                  },
+                  "district_id": {
+                    "type": "number"
+                  },
+                  "ward_id": {
+                    "type": "number"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "delivery_date": {
+                    "type": "date"
+                  },
+                  "delivery_timerange_id": {
+                    "type": "number"
+                  },
+                  "payment_method_id": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
             "description": "OK"
           }
         }
