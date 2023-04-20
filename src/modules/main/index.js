@@ -6,6 +6,6 @@ import { usersRouter } from "./users/index.js";
 
 export const mainRouter = Router();
 
-mainRouter.use('/', usersRouter)
+mainRouter.use('/users', usersRouter)
 mainRouter.use('/categories', categoriesRouter);
 mainRouter.use('/products', productsRouter);
