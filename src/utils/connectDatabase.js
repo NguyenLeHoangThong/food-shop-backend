@@ -6,6 +6,7 @@ export const getConnection = () => {
         client: 'pg',
         connection: parse(process.env.PG_CONNECTION_STRING),
         searchPath: ['knex', 'public'],
+        debug: true,
     });
 }
 
