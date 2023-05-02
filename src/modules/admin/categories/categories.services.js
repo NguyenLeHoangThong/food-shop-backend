@@ -76,4 +76,34 @@ export default class CategoriesServices {
             }))
         }
     }
+
+    static async delete(id, req, res) {
+        try {
+            const client = await getConnection();
+
+            return await client
+                .transaction(async (trx) => {
+                    try {
+                        const results = await trx('categories')
+                            .delete()
+                            .where('id', '=', id)
+
+                        return res.status(200).send({
+                            message: "Delete successfully"
+                        })
+                    }
+                    catch (e) {
+                        return res.status(500).send({
+                            message: e?.message || e
+                        })
+                    }
+                })
+
+        }
+        catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }))
+        }
+    }
 }

@@ -8,6 +8,7 @@ categoriesRouter.route('/')
     .post(categoriesController.create)
 
 categoriesRouter.route('/:id')
+    .delete(categoriesController.delete)
     .put(categoriesController.update);
 
 

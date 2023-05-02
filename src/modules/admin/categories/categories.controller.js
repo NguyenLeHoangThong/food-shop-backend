@@ -19,7 +19,9 @@ export default class CategoriesController {
         try {
             const data = CategoriesValidation.create(req)
             const result = await CategoriesServices.create(data, req, res)
-            return res.json(result)
+            return res.status(200).send({
+                message: "Create successfully"
+            })
 
         } catch (error) {
             return res.status(500).send(({
@@ -33,8 +35,21 @@ export default class CategoriesController {
             const { id } = req.params
             const data = CategoriesValidation.update(req)
             const result = await CategoriesServices.update(id, data, req, res)
-            return res.json(result)
+            return res.status(200).send({
+                message: "Update successfully"
+            })
+        } catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }))
+        }
+    }
 
+    static async delete(req, res) {
+        try {
+            const { id } = req.params
+            const result = await CategoriesServices.delete(id, req, res)
+            
         } catch (error) {
             return res.status(500).send(({
                 error: error?.message || error
