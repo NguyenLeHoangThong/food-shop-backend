@@ -4,8 +4,8 @@ import CategoriesServices from "./categories.services.js";
 export default class CategoriesController {
     static async findAll(req, res) {
         try {
-            
-            const result = await CategoriesServices.findAll(req, res)
+            const data = CategoriesValidation.findAll(req)
+            const result = await CategoriesServices.findAll(data, req, res)
             return res.json(result)
 
         } catch (error) {

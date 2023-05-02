@@ -1,15 +1,32 @@
 import { getConnection } from '../../../utils/connectDatabase.js';
 
 export default class CategoriesServices {
-    static async findAll(req, res) {
+    static async findAll(data, req, res) {
         try {
             const client = await getConnection();
 
-            const results = await client
-                .select()
-                .from('categories')
+            if (data.keyword) {
+                try {
+                    const results = await client.raw(`Select * From categories WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%'`)
+                    return results && results.rows.length ? results.rows : [];
+                } catch (error) {
+                    return res.status(500).send(({
+                        error: error?.message || error
+                    }));
+                }
+            }
+            else {
+                try {
+                    const results = await client.select()
+                        .from('categories')
 
-            return results && results.length ? results : []
+                    return results && results.length ? results : [];
+                } catch (error) {
+                    return res.status(500).send(({
+                        error: error?.message || error
+                    }));
+                }
+            }
         }
         catch (error) {
             return res.status(500).send(({
