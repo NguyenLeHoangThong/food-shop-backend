@@ -30,6 +30,10 @@
     {
       "name": "User information and order list",
       "description": "Api user information and orders"
+    },
+    {
+      "name": "Comment",
+      "description": "Api user comment"
     }
   ],
   "paths": {
@@ -429,6 +433,90 @@
         },
         "responses": {
           "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/products/{id}/comments": {
+      "get": {
+        "tags": [
+          "Products", "Comment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products", "Comment"
+        ],
+        "requestBody":{
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "integer"
+                  },
+                  "comment_content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/products/{id}/comments/{c_id}": {
+      "get": {
+        "tags": [
+          "Products", "Comment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products", "Comment"
+        ],
+        "requestBody":{
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "integer"
+                  },
+                  "comment_content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
             "description": "OK"
           }
         }
