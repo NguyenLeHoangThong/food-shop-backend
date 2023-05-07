@@ -4,7 +4,7 @@ export default class InfoValidation {
     static async create(req) {
         try {
             const schema = yup.object({
-                firebase_uid: yup.number().required(),
+                firebase_uid: yup.string().required(),
                 email: yup.string().nullable().notRequired(),
                 fullname: yup.string().nullable().notRequired(),
                 phone_number: yup.string().nullable().notRequired(),
