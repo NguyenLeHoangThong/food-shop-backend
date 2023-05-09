@@ -8,7 +8,7 @@ export default class CommentsServices {
             var results = await client.select(['1.fullname', '0.comment_content', 'created'])
                 .from(['comment_replies', 'users'])
                 .where('0.comment_id', '=', req.params.c_id)
-                .andWhere('1.id', '=', client.ref('0.id'))
+                .andWhere('1.firebase_uid', '=', client.ref('0.id'))
             return results
 
         } catch (error) {
@@ -84,13 +84,13 @@ export default class CommentsServices {
             var results = await client.select(['0.id', '1.fullname', '0.comment_content', '0.created'])
                 .from(['product_comments ', 'users'])
                 .where('0.product_id', '=', req.params.id)
-                .andWhere('1.id', '=', client.ref('0.user_id'))
+                .andWhere('1.firebase_uid', '=', client.ref('0.user_id'))
                 .then(async comments => {
                     for (var comment of comments) {
                         var replies = await client.select(['1.fullname', '0.comment_content', '0.created'])
                             .from(['comment_replies', 'users'])
                             .where('0.comment_id', '=', comment.id)
-                            .andWhere('1.id', '=', client.ref('0.user_id'))
+                            .andWhere('1.firebase_uid', '=', client.ref('0.user_id'))
                         comment.replies = replies
                     }
                     return comments
