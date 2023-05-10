@@ -4,7 +4,8 @@ export default class ProductsValidation {
     static findAll(req) {
         const schema = yup.object({
             categoryId: yup.number().notRequired(),
-            keyword: yup.string().notRequired()
+            keyword: yup.string().notRequired(),
+            favorite: yup.string().notRequired(),
         })
 
         try {
@@ -16,11 +17,35 @@ export default class ProductsValidation {
 
     static findById(req) {
         const schema = yup.object({
-            id: yup.number().required()
+            favorite: yup.string().notRequired()
         });
 
         try {
-            return schema.validateSync(req.params);
+            return schema.validateSync(req.query);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    static addToFavorite(req) {
+        const schema = yup.object({
+            user_id: yup.string().required()
+        });
+
+        try {
+            return schema.validateSync(req.body);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    static removeFromFavorite(req) {
+        const schema = yup.object({
+            user_id: yup.string().required()
+        });
+
+        try {
+            return schema.validateSync(req.query);
         } catch (error) {
             throw new Error(error);
         }
