@@ -1,6 +1,6 @@
 import { getConnection } from '../../../utils/connectDatabase.js';
 
-export default class ProvincesServices {
+export default class LocationServices {
     static async getById(req, res) {
         try {
             const client = await getConnection();
@@ -33,6 +33,45 @@ export default class ProvincesServices {
         try {
             const client = await getConnection()
             const result = await client.select().from('provinces')
+            return res.json(result)
+        }
+        catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }))
+        }
+    }
+
+    static async getProvincesList(req, res) {
+        try {
+            const client = await getConnection()
+            const result = await client.select().from('provinces')
+            return res.json(result)
+        }
+        catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }))
+        }
+    }
+
+    static async getDistrictsList(req, res) {
+        try {
+            const client = await getConnection()
+            const result = await client.select().from('districts')
+            return res.json(result)
+        }
+        catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }))
+        }
+    }
+
+    static async getWardsList(req, res) {
+        try {
+            const client = await getConnection()
+            const result = await client.select().from('wards')
             return res.json(result)
         }
         catch (error) {
