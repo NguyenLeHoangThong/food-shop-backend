@@ -14,4 +14,8 @@ productsRouter.use('/', commentsRouter)
 productsRouter.route('/:id')
     .get(productsController.findById);
 
+productsRouter.route('/:id/favorite')
+    .post(productsController.addToFavorite)
+    .delete(productsController.removeFromFavorite);
+
 
