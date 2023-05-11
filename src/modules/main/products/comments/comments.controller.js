@@ -26,7 +26,6 @@ export default class CommentsController {
     }
 
     static async newComment(req, res) {
-        console.log(req.body)
         try {
             const data = await CommentsValidation.newItem(req)
 
@@ -40,7 +39,6 @@ export default class CommentsController {
     }
 
     static async getCommentsByProductId(req, res) {
-        console.log(req.body)
         try {
             const result = await CommentsServices.getCommentByProductId(req, res)
             return res.json(result);

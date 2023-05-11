@@ -18,12 +18,38 @@ export default class ProductsController {
 
     static async findById(req, res) {
         try {
-            // const data = ProductsValidation.findById(req);
-            const result = await ProductsServices.findById(req, res);
+            const data = ProductsValidation.findById(req);
+            const result = await ProductsServices.findById(data, req, res);
 
             result.related = await ProductsServices.findRelated(result, RELATED_PRODUCT_LIMIT, req, res);
 
             return res.json(result);
+        } catch (error) {
+            return res.status(500).send({
+                error: error?.message || error
+            });
+        }
+    }
+
+    static async addToFavorite(req, res) {
+        try {
+            const data = ProductsValidation.addToFavorite(req);
+            const result = await ProductsServices.addToFavorite(data, req, res);
+
+            return result;
+        } catch (error) {
+            return res.status(500).send({
+                error: error?.message || error
+            });
+        }
+    }
+
+    static async removeFromFavorite(req, res) {
+        try {
+            const data = ProductsValidation.removeFromFavorite(req);
+            const result = await ProductsServices.removeFromFavorite(data, req, res);
+
+            return result;
         } catch (error) {
             return res.status(500).send({
                 error: error?.message || error

@@ -37,7 +37,6 @@ export default class OrdersValidation {
             return schema.validateSync(req.body);
         }
         catch (error) {
-            console.log(error)
             throw new Error(error);
         }
     }
