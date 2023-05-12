@@ -8,6 +8,8 @@ productsRouter.route('/')
     .get(productsController.findAll)
     .post(productsController.create)
 
+productsRouter.route('/:id/status')
+    .put(productsController.updateStatus)
+
 productsRouter.route('/:id')
-    .delete(productsController.delete)
     .put(productsController.update);

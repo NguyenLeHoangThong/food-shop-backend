@@ -6,7 +6,7 @@ export default class ProductsServices {
             const client = await getConnection();
             if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%'`)
+                    const results = await client.raw(`Select products.*, categories.name as category_name From products Inner Join categories on products.category_id = categories.id WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
                     return res.status(500).send(({
@@ -16,10 +16,9 @@ export default class ProductsServices {
             }
             else {
                 try {
-                    const results = await client.select()
-                        .from('products')
+                    const results = await client.raw('Select products.*, categories.name as category_name From products Inner Join categories on products.category_id = categories.id Order by products.id ASC')
 
-                    return results && results.length ? results : [];
+                    return results && results.rows.length ? results.rows : [];
                 } catch (error) {
                     return res.status(500).send(({
                         error: error?.message || error
@@ -95,7 +94,7 @@ export default class ProductsServices {
         }
     }
 
-    static async delete(id, req, res) {
+    static async updateStatus(id, data, req, res) {
         try {
             const client = await getConnection();
 
@@ -103,11 +102,13 @@ export default class ProductsServices {
                 .transaction(async (trx) => {
                     try {
                         const results = await trx('products')
-                            .delete()
+                            .update({
+                                status: !!data?.active ? 'ACTIVE' : 'INACTIVE'
+                            })
                             .where('id', '=', id)
 
                         return res.status(200).send({
-                            message: "Delete successfully"
+                            message: "Update successfully"
                         })
                     }
                     catch (e) {

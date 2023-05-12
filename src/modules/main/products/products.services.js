@@ -11,6 +11,7 @@ export default class ProductsServices {
                         .select()
                         .from('products')
                         .where(`products.category_id`, '=', data.categoryId)
+                        .where('products.status', '=', 'ACTIVE')
                     return results && results.length ? results : []
                 } catch (error) {
                     return res.status(500).send(({
@@ -20,7 +21,7 @@ export default class ProductsServices {
             }
             else if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%'`)
+                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%' and status = 'ACTIVE'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
                     return res.status(500).send(({
@@ -33,6 +34,7 @@ export default class ProductsServices {
                     const result = await client.select('0.*')
                         .from(['products', 'user_favorite_products'])
                         .where('1.user_id', '=', data.favorite)
+                        .where('products.status', '=', 'ACTIVE')
                         .andWhere('0.id', client.ref('1.product_id'))
                     return result
                 }
@@ -46,6 +48,7 @@ export default class ProductsServices {
                 try {
                     const results = await client.select()
                         .from('products')
+                        .where('products.status', '=', 'ACTIVE')
 
                     return results && results.length ? results : [];
                 } catch (error) {
@@ -69,7 +72,8 @@ export default class ProductsServices {
 
             const results = await client.select()
                 .from('products')
-                .where('products.id', '=', req.params.id);
+                .where('products.id', '=', req.params.id)
+                .where('products.status', '=', 'ACTIVE');
 
             if (results && results.length && data.favorite) {
                 var check = await client.select()
@@ -93,6 +97,7 @@ export default class ProductsServices {
             const results = await client.select()
                 .from('products')
                 .where('products.category_id', '=', data.category_id)
+                .where('products.status', '=', 'ACTIVE')
                 .andWhere('products.id', '<>', data.id)
                 .limit(limit);
 
@@ -169,6 +174,7 @@ export default class ProductsServices {
             const results = await client.select()
                 .from('products')
                 .where('name', 'like', `%${data?.keyword}%`)
+                .where('products.status', '=', 'ACTIVE')
 
             return results && results.length ? results : [];
         } catch (error) {

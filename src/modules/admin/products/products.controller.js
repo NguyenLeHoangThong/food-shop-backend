@@ -52,10 +52,11 @@ export default class ProductsController {
         }
     }
 
-    static async delete(req, res) {
+    static async updateStatus(req, res) {
         try {
             const { id } = req.params
-            const result = await ProductsServices.delete(id, req, res)
+            const data = ProductsValidation.updateStatus(req)
+            const result = await ProductsServices.updateStatus(id, data, req, res)
             
         } catch (error) {
             return res.status(500).send(({

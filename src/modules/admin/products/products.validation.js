@@ -52,4 +52,15 @@ export default class ProductsValidation {
             throw new Error(error);
         }
     }
+
+    static updateStatus(req) {
+        try {
+            const schema = yup.object({
+                active: yup.boolean().nullable().notRequired(),
+            })
+            return schema.validateSync(req.body);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
