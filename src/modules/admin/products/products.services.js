@@ -9,7 +9,6 @@ export default class ProductsServices {
                     const results = await client.raw(`Select products.*, categories.name as category_name From products Inner Join categories on products.category_id = categories.id WHERE LOWER(products.name) like N'%${data.keyword.toLowerCase()}%'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
-                    console.log("error?.message || error: ", error?.message || error)
                     return res.status(500).send(({
                         error: error?.message || error
                     }));
