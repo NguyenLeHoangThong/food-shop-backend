@@ -8,8 +8,9 @@ export default class ProductsServices {
             if (data.categoryId) {
                 try {
                     const results = await client
-                        .select()
+                        .select('products.*', 'promotions.sale_percent')
                         .from('products')
+                        .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
                         .where(`products.category_id`, '=', data.categoryId)
                         .where('products.status', '=', 'ACTIVE')
                     return results && results.length ? results : []
@@ -21,9 +22,10 @@ export default class ProductsServices {
             }
             else if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select * From products WHERE LOWER(name) like N'%${data.keyword.toLowerCase()}%' and status = 'ACTIVE'`)
+                    const results = await client.raw(`Select products.*, sale_percent From products left join promotions on products.promotion_id = promotions.id WHERE LOWER(products.name) like N'%${data.keyword.toLowerCase()}%' and products.status = 'ACTIVE'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
+                    console.log(error);
                     return res.status(500).send(({
                         error: error?.message || error
                     }));
@@ -31,6 +33,7 @@ export default class ProductsServices {
             }
             else if (data.favorite) {
                 try {
+                    // need to add sale_percent
                     const result = await client.select('0.*')
                         .from(['products', 'user_favorite_products'])
                         .where('1.user_id', '=', data.favorite)
@@ -46,8 +49,9 @@ export default class ProductsServices {
             }
             else {
                 try {
-                    const results = await client.select()
+                    const results = await client.select('products.*', 'promotions.sale_percent')
                         .from('products')
+                        .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
                         .where('products.status', '=', 'ACTIVE')
 
                     return results && results.length ? results : [];
@@ -70,8 +74,9 @@ export default class ProductsServices {
         try {
             const client = await getConnection();
 
-            const results = await client.select()
+            const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
+                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
                 .where('products.id', '=', req.params.id)
                 .where('products.status', '=', 'ACTIVE');
 
@@ -94,8 +99,9 @@ export default class ProductsServices {
     static async findRelated(data, limit, req, res) {
         try {
             const client = await getConnection();
-            const results = await client.select()
+            const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
+                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
                 .where('products.category_id', '=', data.category_id)
                 .where('products.status', '=', 'ACTIVE')
                 .andWhere('products.id', '<>', data.id)
@@ -171,8 +177,9 @@ export default class ProductsServices {
     static async searchByText(data, req, res) {
         try {
             const client = await getConnection();
-            const results = await client.select()
+            const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
+                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
                 .where('name', 'like', `%${data?.keyword}%`)
                 .where('products.status', '=', 'ACTIVE')
 
