@@ -61,6 +61,7 @@ export default class CategoriesServices {
                 id: result.category_id,
                 name: result.category_name,
                 products: result.products_with_promotions.slice(0, numberOfProducts),
+                countProducts: result.products_with_promotions.length - numberOfProducts
             }));
 
         }
