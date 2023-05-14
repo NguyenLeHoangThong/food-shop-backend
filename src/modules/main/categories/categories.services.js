@@ -1,5 +1,4 @@
 import { getConnection } from '../../../utils/connectDatabase.js';
-
 export default class CategoriesServices {
     static async previewProducts(req, res) {
         const numberOfProducts = 6
@@ -52,7 +51,7 @@ export default class CategoriesServices {
               promotions.name AS promotion_name,
               promotions.sale_percent AS sale_percent
             FROM promotions
-            WHERE promotions.id = (product.product->>'promotion_id')::int
+            WHERE promotions.id = (product.product->>'promotion_id')::int AND promotions.start_time <= CURRENT_TIMESTAMP AND promotions.end_time >= CURRENT_TIMESTAMP
           ) promotions ON true
           GROUP BY cp.category_id, cp.category_name`);
 

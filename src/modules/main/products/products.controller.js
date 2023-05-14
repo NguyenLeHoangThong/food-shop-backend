@@ -56,4 +56,15 @@ export default class ProductsController {
             });
         }
     }
+
+    static async findAllInActivePromotion(req, res) {
+        try {
+            const results = await ProductsServices.findAllInActivePromotion(req, res);
+            return res.json(results);
+        } catch (error) {
+            return res.status(500).send({
+                error: error?.message || error
+            });
+        }
+    }
 }

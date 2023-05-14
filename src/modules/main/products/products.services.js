@@ -1,16 +1,23 @@
 import { getConnection } from '../../../utils/connectDatabase.js';
+import moment from 'moment-timezone';
 
 export default class ProductsServices {
     static async findAll(data, req, res) {
         try {
             const client = await getConnection();
+            const now = moment().tz("Asia/Ho_Chi_Minh").format();
 
             if (data.categoryId) {
                 try {
                     const results = await client
                         .select('products.*', 'promotions.sale_percent')
                         .from('products')
-                        .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
+                        .leftJoin('promotions', function(){
+                            this
+                            .on('products.promotion_id', "=", "promotions.id")
+                            .on(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
+                            .on(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
+                        })
                         .where(`products.category_id`, '=', data.categoryId)
                         .andWhere('products.status', '=', 'ACTIVE')
                     return results && results.length ? results : []
@@ -22,7 +29,7 @@ export default class ProductsServices {
             }
             else if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select products.*, sale_percent From products left join promotions on products.promotion_id = promotions.id WHERE LOWER(products.name) like N'%${data.keyword.toLowerCase()}%' and products.status = 'ACTIVE'`)
+                    const results = await client.raw(`Select products.*, sale_percent From products left join promotions on products.promotion_id = promotions.id and promotions.start_time <= CURRENT_TIMESTAMP and promotions.end_time >= CURRENT_TIMESTAMP WHERE LOWER(products.name) like N'%${data.keyword.toLowerCase()}%' and products.status = 'ACTIVE'`)
                     return results && results.rows.length ? results.rows : [];
                 } catch (error) {
                     console.log(error);
@@ -51,7 +58,12 @@ export default class ProductsServices {
                 try {
                     const results = await client.select('products.*', 'promotions.sale_percent')
                         .from('products')
-                        .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
+                        .leftJoin('promotions', function(){
+                            this
+                            .on('products.promotion_id', "=", "promotions.id")
+                            .on(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
+                            .on(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
+                        })
                         .where('products.status', '=', 'ACTIVE')
 
                     return results && results.length ? results : [];
@@ -76,7 +88,12 @@ export default class ProductsServices {
 
             const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
-                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
+                .leftJoin('promotions', function(){
+                    this
+                    .on('products.promotion_id', "=", "promotions.id")
+                    .on(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
+                    .on(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
+                })
                 .where('products.id', '=', req.params.id)
                 .andWhere('products.status', '=', 'ACTIVE');
 
@@ -101,7 +118,12 @@ export default class ProductsServices {
             const client = await getConnection();
             const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
-                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
+                .leftJoin('promotions', function(){
+                    this
+                    .on('products.promotion_id', "=", "promotions.id")
+                    .on(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
+                    .on(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
+                })
                 .where('products.category_id', '=', data.category_id)
                 .andWhere('products.status', '=', 'ACTIVE')
                 .andWhere('products.id', '<>', data.id)
@@ -177,14 +199,50 @@ export default class ProductsServices {
     static async searchByText(data, req, res) {
         try {
             const client = await getConnection();
+            const now = moment().tz("Asia/Ho_Chi_Minh").format();
             const results = await client.select('products.*', 'promotions.sale_percent')
                 .from('products')
-                .leftJoin('promotions', 'products.promotion_id', 'promotions.id')
+                .leftJoin('promotions', function(){
+                    this
+                    .on('products.promotion_id', "=", "promotions.id")
+                    .on('promotions.start_time', "<=", now)
+                    .on('promotions.end_time', ">=", now)
+                })
                 .where('name', 'like', `%${data?.keyword}%`)
                 .where('products.status', '=', 'ACTIVE')
 
             return results && results.length ? results : [];
         } catch (error) {
+            return res.status(500).send(({
+                error: error?.message || error
+            }));
+        }
+    }
+
+    static async findAllInActivePromotion(req, res) {
+        try {
+            const client = await getConnection();
+            const now = moment().tz("Asia/Ho_Chi_Minh").format();
+            const results = await client.select('products.*', 'promotions.sale_percent')
+                .from('products')
+                .join('promotions', 'products.promotion_id', 'promotions.id')
+                .where('promotions.start_time', '<=', now)
+                .andWhere('promotions.end_time', '>=', now)
+                .andWhere('products.status', '=', 'ACTIVE');
+
+            const promotions = await client.select("promotions.*", client.raw("(CAST(promotions.end_time AS DATE) - CAST(CURRENT_TIMESTAMP AS DATE)) as day_left"))
+                .from('promotions')
+                .where('promotions.start_time', '<=', now)
+                .andWhere('promotions.end_time', '>=', now);
+
+            return promotions && promotions.length ? promotions.map((promotion) => {
+                const products = results.filter((product) => {
+                    return product.promotion_id === promotion.id;
+                });
+                promotion.products = products;
+                return promotion;
+            }) : [];
+        } catch {
             return res.status(500).send(({
                 error: error?.message || error
             }));

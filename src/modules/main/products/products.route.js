@@ -11,6 +11,8 @@ productsRouter.route('/')
 
 productsRouter.use('/', commentsRouter)
 
+productsRouter.route('/promotion').get(productsController.findAllInActivePromotion);
+
 productsRouter.route('/:id')
     .get(productsController.findById);
 
