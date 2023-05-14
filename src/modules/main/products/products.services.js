@@ -41,12 +41,12 @@ export default class ProductsServices {
             else if (data.favorite) {
                 try {
                     // need to add sale_percent
-                    const result = await client.select('0.*')
-                        .from(['products', 'user_favorite_products'])
-                        .where('1.user_id', '=', data.favorite)
-                        .andWhere('0.status', '=', 'ACTIVE')
-                        .andWhere('0.id', client.ref('1.product_id'))
-                    return result
+                    const result = await client('user_favorite_products').select(['products.*', 'promotions.sale_percent'])
+                        .innerJoin('products', 'products.id', '=', 'user_favorite_products.product_id')
+                        .leftJoin('promotions', 'promotions.id', '=', 'products.promotion_id')
+                        .where('user_favorite_products.user_id', '=', data.favorite)
+                        .andWhere('products.status', '=', 'ACTIVE')
+                    return result && result?.length ? result : [] 
                 }
                 catch (error) {
                     return res.status(500).send(({
