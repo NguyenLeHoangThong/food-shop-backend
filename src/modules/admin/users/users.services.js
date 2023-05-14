@@ -6,8 +6,13 @@ export default class UsersServices {
             const client = await getConnection();
             if (data.keyword) {
                 try {
-                    const results = await client.raw(`Select * From Users WHERE LOWER(fullname) like N'%${data.keyword.toLowerCase()}%'`)
-                    return results && results.rows.length ? results.rows : [];
+                    const results = await client('users').select('users.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province')
+                                    .leftJoin('wards', 'wards.id', '=', 'users.ward_id')
+                                    .leftJoin('districts', 'districts.id', '=', 'users.district_id')
+                                    .leftJoin('provinces', 'provinces.id', '=', 'users.province_id')
+                                    .whereRaw(`LOWER(fullname) like N'%${data.keyword.toLowerCase()}%' OR LOWER(email) like N'%${data.keyword.toLowerCase()}%' OR LOWER(firebase_uid) like N'%${data.keyword.toLowerCase()}%'`)
+
+                    return results && results.length ? results.map((it) => ({ ...it, address: [it?.address, it?.ward, it?.district, it?.province].filter((fIt) => !!fIt).join(', ')})) : [];
                 } catch (error) {
                     return res.status(500).send(({
                         error: error?.message || error
@@ -16,51 +21,18 @@ export default class UsersServices {
             }
             else {
                 try {
-                    const results = await client.raw('Select * From Users')
+                    const results = await client('users').select('users.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province')
+                                    .leftJoin('wards', 'wards.id', '=', 'users.ward_id')
+                                    .leftJoin('districts', 'districts.id', '=', 'users.district_id')
+                                    .leftJoin('provinces', 'provinces.id', '=', 'users.province_id')
 
-                    return results && results.rows.length ? results.rows : [];
+                    return results && results.length ? results.map((it) => ({ ...it, address: [it?.address, it?.ward, it?.district, it?.province].filter((fIt) => !!fIt).join(', ')})) : [];
                 } catch (error) {
                     return res.status(500).send(({
                         error: error?.message || error
                     }));
                 }
             }
-        }
-        catch (error) {
-            return res.status(500).send(({
-                error: error?.message || error
-            }))
-        }
-    }
-
-    static async createAdminAccount(data, req, res) {
-        try {
-            const client = await getConnection();
-
-            const user_check = await client.select('users.id').from('users').where('users.firebase_uid', '=', data.firebase_uid);
-            if (user_check && user_check.length) throw Error("account existed")
-
-            return await client
-                .transaction(async (trx) => {
-                    try {
-                        const results = await trx('users')
-                            .insert({
-                                ...data,
-                                authority: 'ADMIN'
-                            }).returning('id')
-
-                        return res.status(201).send({
-                            message: "Create successfully"
-                        })
-                    }
-                    catch (e) {
-
-                        return res.status(500).send({
-                            message: e?.message || e
-                        })
-                    }
-                })
-
         }
         catch (error) {
             return res.status(500).send(({

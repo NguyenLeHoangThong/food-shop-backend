@@ -6,6 +6,3 @@ export const usersRouter = Router();
 
 usersRouter.route('/')
     .get(UsersController.findAll)
-
-usersRouter.route('/')
-    .post(UsersController.createAdminAccount)

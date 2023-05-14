@@ -12,17 +12,4 @@ export default class UsersValidation {
             throw new Error(error);
         }
     }
-
-    static async createAdminAccount(req) {
-        try {
-            const schema = yup.object({
-                firebase_uid: yup.string().required(),
-                email: yup.string().nullable().notRequired(),
-            })
-            return schema.validateSync(req.body);
-        }
-        catch (error) {
-            throw new Error(error);
-        }
-    }
 }
