@@ -5,3 +5,4 @@ export const ordersRouter = Router();
 
 ordersRouter.route("/:uid/orders").get(OrdersController.findAllFromUid)
 ordersRouter.route("/:uid/orders").post(OrdersController.create)
+ordersRouter.route("/:uid/orders/time-range").get(OrdersController.getTimerange)
