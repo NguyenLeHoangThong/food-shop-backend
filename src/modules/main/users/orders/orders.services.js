@@ -50,6 +50,9 @@ export default class OrdersServices {
 		try {
 			const client = await getConnection()
 			var user_id = await client.select('users.id').from('users').where('users.firebase_uid', uid)
+			var promotion = await client.select().from('promotions')
+				.where(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
+				.andWhere(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
 			if (!(user_id && user_id[0])) throw Error('missing id')
 
 			var { items } = data
@@ -61,12 +64,19 @@ export default class OrdersServices {
 			var order_items = []
 			var total = 0
 			items.forEach(item => {
+				var iPromo = promotion.filter(i => i.id == item.product.promotion_id)
+				var discount = iPromo[0] ? iPromo[0].sale_percent : 0
+
 				order_items.push({
 					product_id: item.product.id,
 					quantity: item.quantity,
+					name: item.product.name,
+					unit_price: item.product.unit_price,
+					general_description: item.product.general_description,
+					sale_percent: discount
 				})
 
-				total += item.product.unit_price * item.quantity
+				total += item.product.unit_price * (1 - discount / 100) * item.quantity
 			})
 
 			return await client
@@ -93,6 +103,22 @@ export default class OrdersServices {
 						})
 					}
 				})
+
+
+		} catch (error) {
+
+			console.log(error)
+			return res.status(500).send(({
+				error: error?.message || error
+			}));
+		}
+	}
+
+	static async getTimerange(req, res) {
+		try {
+			const client = await getConnection();
+			var result = await client.select().from("delivery_timeranges");
+			return result;
 
 
 		} catch (error) {

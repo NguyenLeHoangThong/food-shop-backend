@@ -26,4 +26,15 @@ export default class OrdersController {
 			});
 		}
 	}
+
+	static async getTimerange(req, res) {
+		try {
+			const result = await OrdersServices.getTimerange()
+			return res.json(result)
+		} catch {
+			return res.status(500).send({
+				error: error?.message || error,
+			});
+		}
+	}
 }
