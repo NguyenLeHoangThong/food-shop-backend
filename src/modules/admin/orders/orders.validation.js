@@ -15,18 +15,7 @@ export default class UsersValidation {
 
     static updateStatus(req) {
         const schema = yup.object({
-            status: yup.string().required()
-        })
-
-        try {
-            return schema.validateSync(req.body);
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-
-    static updateIsPaid(req) {
-        const schema = yup.object({
+            status: yup.string().required(),
             is_paid: yup.boolean().notRequired()
         })
 

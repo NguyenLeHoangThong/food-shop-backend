@@ -28,16 +28,4 @@ export default class OrdersController {
         }
     }  
 
-    static async updateIsPaid(req, res) {
-        try {
-            const { id } = req.params
-            const data = OrdersValidation.updateIsPaid(req)
-            const result = await OrdersServices.updateIsPaid(id, data, req, res)
-
-        } catch (error) {
-            return res.status(500).send(({
-                error: error?.message || error
-            }))
-        }
-    }  
 }

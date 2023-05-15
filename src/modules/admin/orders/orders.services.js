@@ -5,13 +5,14 @@ export default class UsersServices {
         const client = await getConnection();
         if (data.keyword) {
             const results = await client
-                .select(['orders.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province', client.raw(`json_agg(order_items.*) as order_items`)])
+                .select(['orders.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province', 'payment_methods.name as payment_method_name', client.raw(`json_agg(order_items.*) as order_items`)])
                 .from('orders')
                 .innerJoin('order_items', 'orders.id', '=', 'order_items.order_id')
                 .leftJoin('wards', 'wards.id', '=', 'orders.ward_id')
                 .leftJoin('districts', 'districts.id', '=', 'orders.district_id')
                 .leftJoin('provinces', 'provinces.id', '=', 'orders.province_id')
-                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name'])
+                .innerJoin('payment_methods', 'payment_methods.id', '=', 'orders.payment_method_id')
+                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name', 'payment_methods.name'])
                 .whereRaw(`LOWER(fullname) like N'%${data.keyword.toLowerCase()}%' OR LOWER(email) like N'%${data.keyword.toLowerCase()}%' OR LOWER(id) like N'%${data.keyword.toLowerCase()}%'`)
 
             return results && results.length ? results.map((it) => ({ ...it, address: [it?.address, it?.ward, it?.district, it?.province].filter((fIt) => !!fIt).join(', ') })) : [];
@@ -24,20 +25,22 @@ export default class UsersServices {
                 .leftJoin('wards', 'wards.id', '=', 'orders.ward_id')
                 .leftJoin('districts', 'districts.id', '=', 'orders.district_id')
                 .leftJoin('provinces', 'provinces.id', '=', 'orders.province_id')
-                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name'])
+                .innerJoin('payment_methods', 'payment_methods.id', '=', 'orders.payment_method_id')
+                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name', 'payment_methods.name'])
                 .where(`status`, '=', data?.filterStatus)
 
             return results && results.length ? results.map((it) => ({ ...it, address: [it?.address, it?.ward, it?.district, it?.province].filter((fIt) => !!fIt).join(', ') })) : [];
         }
         else {
             const results = await client
-                .select(['orders.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province', client.raw(`json_agg(order_items.*) as order_items`)])
+            .select(['orders.*', 'wards.name as ward', 'districts.name as district', 'provinces.name as province', 'payment_methods.name as payment_method_name', client.raw(`json_agg(order_items.*) as order_items`)])
                 .from('orders')
                 .innerJoin('order_items', 'orders.id', '=', 'order_items.order_id')
                 .leftJoin('wards', 'wards.id', '=', 'orders.ward_id')
                 .leftJoin('districts', 'districts.id', '=', 'orders.district_id')
                 .leftJoin('provinces', 'provinces.id', '=', 'orders.province_id')
-                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name'])
+                .innerJoin('payment_methods', 'payment_methods.id', '=', 'orders.payment_method_id')
+                .groupBy(['orders.id', 'wards.name', 'districts.name', 'provinces.name', 'payment_methods.name'])
 
             return results && results.length ? results.map((it) => ({ ...it, address: [it?.address, it?.ward, it?.district, it?.province].filter((fIt) => !!fIt).join(', ') })) : [];
         }
@@ -49,22 +52,10 @@ export default class UsersServices {
         return await client
             .transaction(async (trx) => {
                 const results = await trx('orders')
-                    .update("status", data.status)
-                    .where('id', '=', id)
-
-                return res.status(200).send({
-                    message: "Update successfully"
-                })
-            })
-    }
-
-    static async updateIsPaid(id, data, req, res) {
-        const client = await getConnection();
-
-        return await client
-            .transaction(async (trx) => {
-                const results = await trx('orders')
-                    .update("is_paid", data?.is_paid ?? false)
+                    .update({
+                        status: data.status,
+                        is_paid: data.is_paid ?? false
+                    })
                     .where('id', '=', id)
 
                 return res.status(200).send({

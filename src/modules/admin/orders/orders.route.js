@@ -7,8 +7,5 @@ export const ordersRouter = Router();
 ordersRouter.route('/')
     .get(OrdersController.findAll)
 
-ordersRouter.route('/status')
+ordersRouter.route('/:id')
     .put(OrdersController.updateStatus)
-
-ordersRouter.route('/ispaid')
-    .put(OrdersController.updateIsPaid)
