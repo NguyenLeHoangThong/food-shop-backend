@@ -33,6 +33,8 @@ export default class OrdersServices {
 								order.items = items
 							}
 
+
+
 							return orders
 						})
 
@@ -53,6 +55,10 @@ export default class OrdersServices {
 			var promotion = await client.select().from('promotions')
 				.where(client.raw('promotions.start_time <= CURRENT_TIMESTAMP'))
 				.andWhere(client.raw('promotions.end_time >= CURRENT_TIMESTAMP'))
+			var timerange = await client('delivery_timerange.id', 'delivery_timerange.fee').from('delivery_timeranges')
+			var oTimerange = timerange.filter(i => i.id == data.elivery_timerange_id)
+
+
 			if (!(user_id && user_id[0])) throw Error('missing id')
 
 			var { items } = data
@@ -62,7 +68,7 @@ export default class OrdersServices {
 			data.user_id = user_id[0].id
 
 			var order_items = []
-			var total = 0
+			var total = oTimerange[0] ? oTimerange[0].fee : 0
 			items.forEach(item => {
 				var iPromo = promotion.filter(i => i.id == item.product.promotion_id)
 				var discount = iPromo[0] ? iPromo[0].sale_percent : 0
@@ -106,8 +112,6 @@ export default class OrdersServices {
 
 
 		} catch (error) {
-
-			console.log(error)
 			return res.status(500).send(({
 				error: error?.message || error
 			}));
